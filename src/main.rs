@@ -1,3 +1,5 @@
+mod decode;
+
 struct CPU {
     registers: [i32; 32],
     memory: Vec<i32>,
@@ -6,21 +8,22 @@ struct CPU {
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 enum Instruction {
-    Addi { rd: usize, rs1: usize, imm: i32 },
-    Add { rd: usize, rs1: usize, rs2: usize },
-    Sub { rd: usize, rs1: usize, rs2: usize },
-    Jump { target: usize },
+    Add     { rd: usize, rs1: usize, rs2: usize },
+    Sub     { rd: usize, rs1: usize, rs2: usize },
+    Sll     { rd: usize, rs1: usize, rs2: usize },
+    Slt     { rd: usize, rs1: usize, rs2: usize },
+    Sltu    { rd: usize, rs1: usize, rs2: usize },
+    Xor     { rd: usize, rs1: usize, rs2: usize },
+    Srl     { rd: usize, rs1: usize, rs2: usize },
+    Sra     { rd: usize, rs1: usize, rs2: usize },
+    Or      { rd: usize, rs1: usize, rs2: usize },
+    And     { rd: usize, rs1: usize, rs2: usize },
+    Addi    { rd: usize, rs1: usize, imm: i32 },
+    Jump    { target: usize },
 }
 
 impl CPU {
-    //加立即數
-    fn addi(&mut self, rd: usize, rs1: usize, imm: i32) {
-        if rd != 0 {
-            // rd (distination register) = rs1 (source register) + imm (immediate)
-            self.registers[rd] = self.registers[rs1] + imm;
-        }
-        self.pc += 1;
-    }
+
     //暫存器互加
     fn add(&mut self, rd: usize, rs1: usize, rs2: usize) {
         if rd != 0 {
@@ -28,10 +31,58 @@ impl CPU {
         }
         self.pc += 1;
     }
+
     //暫存器互減
     fn sub(&mut self, rd: usize, rs1: usize, rs2: usize) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] - self.registers[rs2];
+        }
+        self.pc += 1;
+    }
+    //TODO:
+    fn sll(&mut self, rd: usize, rs1: usize, rs2: usize) {
+
+    }
+
+    //TODO:
+    fn slt(&mut self, rd: usize, rs1: usize, rs2: usize) {}
+
+    //TODO:
+    fn sltu(&mut self, rd: usize, rs1: usize, rs2: usize) {}
+
+    //TODO:
+    fn xor(&mut self, rd: usize, rs1: usize, rs2: usize) {
+        if rd != 0 {
+            self.registers[rd] = self.registers[rs1] ^ self.registers[rs2];
+        }
+        self.pc += 1;
+    }
+
+    //TODO
+    fn srl(&mut self, rd: usize, rs1: usize, rs2: usize) {}
+
+    //TODO
+    fn sra(&mut self, rd: usize, rs1: usize, rs2: usize) {}
+
+    fn or(&mut self, rd: usize, rs1: usize, rs2: usize) {
+        if rd != 0 {
+            self.registers[rd] = self.registers[rs1] | self.registers[rs2];
+        }
+        self.pc += 1;
+    }
+
+    fn and(&mut self, rd: usize, rs1: usize, rs2: usize) {
+        if rd != 0 {
+            self.registers[rd] = self.registers[rs1] & self.registers[rs2];
+        }
+        self.pc += 1;
+    }
+
+    //加立即數
+    fn addi(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            // rd (distination register) = rs1 (source register) + imm (immediate)
+            self.registers[rd] = self.registers[rs1] + imm;
         }
         self.pc += 1;
     }
@@ -42,14 +93,39 @@ impl CPU {
 
     fn execute(&mut self, inst: Instruction) {
         match inst {
-            Instruction::Addi { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
-            }
+
             Instruction::Add { rd, rs1, rs2 } => {
                 self.add(rd, rs1, rs2);
             }
             Instruction::Sub { rd, rs1, rs2 } => {
                 self.sub(rd, rs1, rs2);
+            }
+            Instruction::Sll { rd, rs1, rs2 } => {
+                self.sll(rd, rs1, rs2);
+            }
+            Instruction::Slt { rd, rs1, rs2 } => {
+                self.slt(rd, rs1, rs2);
+            }
+            Instruction::Sltu { rd, rs1, rs2 } => {
+                self.sltu(rd, rs1, rs2);
+            }
+            Instruction::Xor { rd, rs1, rs2 } => {
+                self.xor(rd, rs1, rs2);
+            }
+            Instruction::Srl{ rd, rs1, rs2 } => {
+                self.srl(rd, rs1, rs2);
+            }
+            Instruction::Sra { rd, rs1, rs2 } => {
+                self.sra(rd, rs1, rs2);
+            }
+            Instruction::Or { rd, rs1, rs2 } => {
+                self.or(rd, rs1, rs2);
+            }
+            Instruction::And { rd, rs1, rs2 } => {
+                self.and(rd, rs1, rs2);
+            }
+            Instruction::Addi { rd, rs1, imm } => {
+                self.addi(rd, rs1, imm);
             }
             Instruction::Jump { target } => {
                 self.jump(target);
@@ -63,64 +139,23 @@ impl CPU {
             self.execute(inst);
         }
     }
-}
 
-fn get_opcode(inst: u32) -> u32 {
-    inst & 0b1111111
-}
-
-fn get_rd(inst: u32) -> u32 {
-    (inst >> 7) & 0b11111
-}
-
-fn get_rs1(inst: u32) -> u32 {
-    (inst >> 15) & 0b11111
-}
-
-fn get_rs2(inst: u32) -> u32 {
-    (inst >> 20) & 0b11111
-}
-
-fn get_funct3(inst: u32) -> u32 {
-    (inst >> 12) & 0b111
-}
-
-fn get_funct7(inst: u32) -> u32 {
-    (inst >> 25) & 0b1111111
-}
-
-fn get_imm_i(inst: u32) -> i32 {
-    ((inst as i32) >> 20)
-}
-
-fn decode(inst: u32) -> Instruction {
-    let opcode = get_opcode(inst);
-
-    match opcode {
-        0b0110011 => {
-            //R-type
-            let rd = get_rd(inst) as usize;
-            let rs1 = get_rs1(inst) as usize;
-            let rs2 = get_rs2(inst) as usize;
-            let funct3 = get_funct3(inst);
-            let funct7 = get_funct7(inst);
-
-            //R-type 裡，用funct3 + funct7 區分是哪條指令
-            match (funct3, funct7) {
-                (0b000, 0b0000000) => Instruction::Add { rd, rs1, rs2 },
-                (0b000, 0b0100000) => Instruction::Sub { rd, rs1, rs2 },
-                _ => panic!("unknown R-type instruction"),
-            }
+    fn run_binary(&mut self, program: Vec<u32>) {
+        while self.pc < program.len() {
+            let machine_code = program[self.pc];
+            let inst = decode::decode(machine_code);
+            self.execute(inst);
         }
-        _ => panic!("unknown opcode"),
     }
 }
+
 fn main() {}
 
 #[cfg(test)]
 mod tests {
     //把外部(父模組)的東西引入近來
     use super::*; //引入外面的 CPU
+    use crate::decode::*;
 
     #[test]
     fn test_addi_basic() {
@@ -272,5 +307,23 @@ mod tests {
     fn test_get_imm_i() {
         assert_eq!(get_imm_i(0x00500093), 5);
         assert_eq!(get_imm_i(0xffb00093), -5);
+    }
+
+    #[test]
+    fn test_decode_addi() {
+        let decoded = decode(0x00500093);
+        assert_eq!(decoded, Instruction::Addi { rd: 1, rs1: 0, imm: 5 });
+    }
+
+    #[test]
+    fn test_run_binary() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let program: Vec<u32> = vec![
+            0x00500093,   // addi x1, x0, 5
+            0x00300113,   // addi x2, x0, 3
+            0x002081b3,   // add  x3, x1, x2  →  x3 = 8
+        ];
+        cpu.run_binary(program);
+        assert_eq!(cpu.registers[3], 8);
     }
 }
