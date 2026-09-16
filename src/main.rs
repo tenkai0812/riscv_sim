@@ -90,14 +90,15 @@ fn get_funct7(inst: u32) -> u32 {
 }
 
 fn get_imm_i(inst: u32) -> i32 {
-    ((inst as i32 )>> 20)
+    ((inst as i32) >> 20)
 }
 
 fn decode(inst: u32) -> Instruction {
     let opcode = get_opcode(inst);
 
     match opcode {
-        0b0110011 => { //R-type
+        0b0110011 => {
+            //R-type
             let rd = get_rd(inst) as usize;
             let rs1 = get_rs1(inst) as usize;
             let rs2 = get_rs2(inst) as usize;
@@ -220,10 +221,22 @@ mod tests {
             pc: 0,
         };
         let program = vec![
-            Instruction::Addi { rd: 1, rs1: 0, imm: 1 },
+            Instruction::Addi {
+                rd: 1,
+                rs1: 0,
+                imm: 1,
+            },
             Instruction::Jump { target: 3 },
-            Instruction::Addi { rd: 1, rs1: 0, imm: 99},
-            Instruction::Addi { rd: 2, rs1: 0, imm: 5},
+            Instruction::Addi {
+                rd: 1,
+                rs1: 0,
+                imm: 99,
+            },
+            Instruction::Addi {
+                rd: 2,
+                rs1: 0,
+                imm: 5,
+            },
         ];
         cpu.run(program);
         assert_eq!(cpu.registers[1], 1);
@@ -233,24 +246,31 @@ mod tests {
     #[test]
     fn test_decode_fields() {
         let inst: u32 = 0x002081b3;
-        assert_eq!(get_opcode(inst), 0b0110011);    // R-type add 的 opcode
-        assert_eq!(get_rd(inst), 3);                // x3
-        assert_eq!(get_rs1(inst), 1);               // x1
-        assert_eq!(get_rs2(inst), 2);               // x2
+        assert_eq!(get_opcode(inst), 0b0110011); // R-type add 的 opcode
+        assert_eq!(get_rd(inst), 3); // x3
+        assert_eq!(get_rs1(inst), 1); // x1
+        assert_eq!(get_rs2(inst), 2); // x2
         assert_eq!(get_funct3(inst), 0);
-        assert_eq!(get_funct7(inst), 0);     // add 的 funct3 = 000
+        assert_eq!(get_funct7(inst), 0); // add 的 funct3 = 000
     }
 
     #[test]
     fn test_decode_add() {
         let inst: u32 = 0x002081b3;
         let decoded = decode(inst);
-        assert_eq!(decoded, Instruction::Add { rd: 3, rs1: 1, rs2: 2 });
+        assert_eq!(
+            decoded,
+            Instruction::Add {
+                rd: 3,
+                rs1: 1,
+                rs2: 2
+            }
+        );
     }
 
+    #[test]
     fn test_get_imm_i() {
         assert_eq!(get_imm_i(0x00500093), 5);
         assert_eq!(get_imm_i(0xffb00093), -5);
     }
-
 }
