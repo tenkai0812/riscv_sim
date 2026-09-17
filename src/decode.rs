@@ -1,3 +1,5 @@
+use std::{arch::x86_64::_MM_FROUND_CUR_DIRECTION, time::Instant};
+
 use crate::instruction::Instruction;
 
 pub fn get_opcode(inst: u32) -> u32 {
@@ -30,6 +32,15 @@ pub fn get_imm_i(inst: u32) -> i32 {
 
 pub fn get_shamt(inst: u32) -> u32 {
     (inst >> 20) & 0b11111
+}
+
+pub fn get_imm_b(inst: u32) -> i32 {
+    let imm12 = ((inst >> 31) & 0b1) << 12;
+    let imm11 = ((inst >> 7) & 0b1) << 11;
+    let imm10_5 = ((inst >> 25) & 0b111111) << 5;
+    let imm4_1 = ((inst >> 8) & 0b1111) << 1;
+    let imm = imm12 | imm11 | imm10_5 | imm4_1;
+    (imm << 19) as i32 >> 19
 }
 
 pub fn decode(inst: u32) -> Instruction {
@@ -84,6 +95,23 @@ pub fn decode(inst: u32) -> Instruction {
                 0b110 => Instruction::Ori   { rd, rs1, imm },
                 0b111 => Instruction::Andi  { rd, rs1, imm },
                 _ => panic!("unknown I-Type instruction"),
+            }
+        }
+        //B-type
+        0b1100011 => {
+            let rs1 = get_rs1(inst) as usize;
+            let rs2 = get_rs2(inst) as usize;
+            let funct3 = get_funct3(inst);
+            let imm = get_imm_b(inst);
+
+            match funct3 {
+                0b000 => Instruction::Beq   { rs1, rs2, imm },
+                0b001 => Instruction::Bne   { rs1, rs2, imm },
+                0b100 => Instruction::Blt   { rs1, rs2, imm },
+                0b101 => Instruction::Bge   { rs1, rs2, imm },
+                0b110 => Instruction::Bltu  { rs1, rs2, imm },
+                0b111 => Instruction::Bgeu  { rs1, rs2, imm },
+                _ => panic!("unknown B-Type instruction"),
             }
         }
         _ => panic!("unknown opcode"),

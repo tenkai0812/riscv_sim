@@ -19,5 +19,11 @@ pub enum Instruction {
     Slli    { rd: usize, rs1: usize, shamt: u32},
     Srli    { rd: usize, rs1: usize, shamt: u32},
     Srai    { rd: usize, rs1: usize, shamt: u32},
+    Beq     { rs1: usize, rs2: usize, imm: i32},
+    Bne     { rs1: usize, rs2: usize, imm: i32},
+    Blt     { rs1: usize, rs2: usize, imm: i32},
+    Bge     { rs1: usize, rs2: usize, imm: i32},
+    Bltu     { rs1: usize, rs2: usize, imm: i32},
+    Bgeu     { rs1: usize, rs2: usize, imm: i32},
     Jump    { target: usize },
 }

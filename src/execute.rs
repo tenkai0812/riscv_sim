@@ -97,14 +97,14 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = if (self.registers[rs1] as i32) < (imm as i32) { 1 } else { 0 };
         }
-        self.pc += 0;
+        self.pc += 1;
     }
 
     pub fn sltiu(&mut self, rd: usize, rs1: usize,imm: i32) {
         if rd != 0 {
             self.registers[rd] = if (self.registers[rs1] as u32) < (imm as u32) { 1 } else { 0 };
         }
-        self.pc += 0;
+        self.pc += 1;
     }
 
     pub fn xori(&mut self, rd: usize, rs1: usize,imm: i32) {
@@ -149,6 +149,54 @@ impl CPU {
         self.pc += 1;
     }
 
+    pub fn beq(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if self.registers[rs1] == self.registers[rs2] {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
+    pub fn bne(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if self.registers[rs1] != self.registers[rs2] {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
+    pub fn blt(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if (self.registers[rs1] as i32) < (self.registers[rs2] as i32) {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
+    pub fn bge(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if (self.registers[rs1] as i32) >= (self.registers[rs2] as i32) {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
+    pub fn bltu(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if (self.registers[rs1] as u32) < (self.registers[rs2] as u32) {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
+    pub fn bgeu(&mut self, rs1: usize, rs2: usize, imm:i32) {
+        if (self.registers[rs1] as u32) >= (self.registers[rs2] as u32) {
+            self.pc = (self.pc as i32 + imm) as usize;
+        } else {
+            self.pc += 1;
+        }
+    }
+
     pub fn jump(&mut self, target: usize) {
         self.pc = target;
     }
@@ -190,19 +238,19 @@ impl CPU {
                 self.addi(rd, rs1, imm);
             }
             Instruction::Slti { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
+                self.slti(rd, rs1, imm);
             }
             Instruction::Sltiu { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
+                self.sltiu(rd, rs1, imm);
             }
             Instruction::Xori { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
+                self.xori(rd, rs1, imm);
             }
             Instruction::Ori { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
+                self.ori(rd, rs1, imm);
             }
             Instruction::Andi { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
+                self.andi(rd, rs1, imm);
             }
             Instruction::Slli { rd, rs1, shamt } => {
                 self.slli(rd, rs1, shamt);
@@ -212,6 +260,24 @@ impl CPU {
             }
             Instruction::Srai { rd, rs1, shamt } => {
                 self.srai(rd, rs1, shamt);
+            }
+            Instruction::Beq { rs1, rs2, imm } => {
+                self.beq(rs1, rs2, imm);
+            }
+            Instruction::Bne { rs1, rs2, imm } => {
+                self.bne(rs1, rs2, imm);
+            }
+            Instruction::Blt { rs1, rs2, imm } => {
+                self.blt(rs1, rs2, imm);
+            }
+            Instruction::Bge { rs1, rs2, imm } => {
+                self.bge(rs1, rs2, imm);
+            }
+            Instruction::Bltu { rs1, rs2, imm } => {
+                self.bltu(rs1, rs2, imm);
+            }
+            Instruction::Bgeu { rs1, rs2, imm } => {
+                self.bgeu(rs1, rs2, imm);
             }
             Instruction::Jump { target } => {
                 self.jump(target);

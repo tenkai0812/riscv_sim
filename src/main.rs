@@ -270,4 +270,45 @@ mod tests {
         cpu.srli(4, 1, 1);        // 邏輯右移 補0 → 大正數
         assert_eq!(cpu.registers[4], 2147483644);
     }
+    #[test]
+    fn test_branch_loop() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        // 用迴圈把 x1 累加到 5:
+        // x1 = 0; while x1 != 5 { x1 += 1 }
+        let program = vec![
+            Instruction::Addi { rd: 1, rs1: 0, imm: 0 },   // [0] x1 = 0
+            Instruction::Addi { rd: 2, rs1: 0, imm: 5 },   // [1] x2 = 5 (目標)
+            Instruction::Addi { rd: 1, rs1: 1, imm: 1 },   // [2] x1 += 1  ← 迴圈體
+            Instruction::Bne  { rs1: 1, rs2: 2, imm: -1 }, // [3] if x1 != 5, 往回跳 1 格(回到 [2])
+        ];
+        cpu.run(program);
+        assert_eq!(cpu.registers[1], 5);   // 迴圈跑完,x1 = 5
+    }
+    #[test]
+    fn test_beq() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let program = vec![
+            Instruction::Addi { rd: 1, rs1: 0, imm: 5 },   // [0] x1 = 5
+            Instruction::Addi { rd: 2, rs1: 0, imm: 5 },   // [1] x2 = 5
+            Instruction::Beq  { rs1: 1, rs2: 2, imm: 2 },  // [2] x1==x2 成立,跳 +2 → 到 [4],跳過 [3]
+            Instruction::Addi { rd: 3, rs1: 0, imm: 99 },  // [3] 被跳過
+            Instruction::Addi { rd: 4, rs1: 0, imm: 7 },   // [4] x4 = 7
+        ];
+        cpu.run(program);
+        assert_eq!(cpu.registers[3], 0);   // [3] 被跳過,x3 還是 0
+        assert_eq!(cpu.registers[4], 7);   // [4] 有執行
+    }
+    #[test]
+    fn test_get_imm_b() {
+        // beq x1, x2, 8  (正偏移)
+        assert_eq!(get_imm_b(0x00208463), 8);
+        // beq x1, x2, -4 (負偏移,驗證符號延伸!)
+        assert_eq!(get_imm_b(0xfe208ee3), -4);
+    }
+
+    #[test]
+    fn test_decode_beq() {
+        let decoded = decode(0x00208463);   // beq x1, x2, 8
+        assert_eq!(decoded, Instruction::Beq { rs1: 1, rs2: 2, imm: 8 });
+    }
 }
