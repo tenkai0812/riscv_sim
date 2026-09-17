@@ -1,164 +1,15 @@
 mod decode;
+mod execute;
+mod instruction;
 
-struct CPU {
+use instruction::Instruction;
+pub struct CPU {
     registers: [i32; 32],
     memory: Vec<i32>,
     pc: usize,
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
-enum Instruction {
-    Add     { rd: usize, rs1: usize, rs2: usize },
-    Sub     { rd: usize, rs1: usize, rs2: usize },
-    Sll     { rd: usize, rs1: usize, rs2: usize },
-    Slt     { rd: usize, rs1: usize, rs2: usize },
-    Sltu    { rd: usize, rs1: usize, rs2: usize },
-    Xor     { rd: usize, rs1: usize, rs2: usize },
-    Srl     { rd: usize, rs1: usize, rs2: usize },
-    Sra     { rd: usize, rs1: usize, rs2: usize },
-    Or      { rd: usize, rs1: usize, rs2: usize },
-    And     { rd: usize, rs1: usize, rs2: usize },
-    Addi    { rd: usize, rs1: usize, imm: i32 },
-    Jump    { target: usize },
-}
-
 impl CPU {
-
-    //暫存器互加
-    fn add(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] + self.registers[rs2];
-        }
-        self.pc += 1;
-    }
-
-    //暫存器互減
-    fn sub(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] - self.registers[rs2];
-        }
-        self.pc += 1;
-    }
-    //TODO:
-    fn sll(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            let shift = (self.registers[rs2] & 0b11111) as u32;   // 只取低 5 位
-            self.registers[rd] = self.registers[rs1] << shift;
-        }
-        self.pc += 1;
-    }
-
-    //TODO:
-    fn slt(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-             self.registers[rd] = if self.registers[rs1] < self.registers[rs2] { 1 } else { 0 };
-        }
-        self.pc += 1;
-    }
-
-    //TODO:
-    fn sltu(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = if (self.registers[rs1] as u32) < (self.registers[rs2] as u32) { 1 } else { 0 };
-        }
-        self.pc += 1;
-    }
-
-    //TODO:
-    fn xor(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] ^ self.registers[rs2];
-        }
-        self.pc += 1;
-    }
-
-    // SRL:邏輯右移(補0)
-    fn srl(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        let shift = (self.registers[rs2] & 0b11111) as u32;
-        if rd != 0 {
-            self.registers[rd] = ((self.registers[rs1] as u32) >> shift) as i32;
-        }
-        self.pc += 1;
-    }
-
-    //TODO
-    fn sra(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        let shift = (self.registers[rs2] & 0b11111) as u32;
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] >> shift;
-        }
-        self.pc += 1;
-    }
-
-    fn or(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] | self.registers[rs2];
-        }
-        self.pc += 1;
-    }
-
-    fn and(&mut self, rd: usize, rs1: usize, rs2: usize) {
-        if rd != 0 {
-            self.registers[rd] = self.registers[rs1] & self.registers[rs2];
-        }
-        self.pc += 1;
-    }
-
-    //加立即數
-    fn addi(&mut self, rd: usize, rs1: usize, imm: i32) {
-        if rd != 0 {
-            // rd (distination register) = rs1 (source register) + imm (immediate)
-            self.registers[rd] = self.registers[rs1] + imm;
-        }
-        self.pc += 1;
-    }
-
-    fn jump(&mut self, target: usize) {
-        self.pc = target;
-    }
-
-    fn execute(&mut self, inst: Instruction) {
-        match inst {
-
-            Instruction::Add { rd, rs1, rs2 } => {
-                self.add(rd, rs1, rs2);
-            }
-            Instruction::Sub { rd, rs1, rs2 } => {
-                self.sub(rd, rs1, rs2);
-            }
-            Instruction::Sll { rd, rs1, rs2 } => {
-                self.sll(rd, rs1, rs2);
-            }
-            Instruction::Slt { rd, rs1, rs2 } => {
-                self.slt(rd, rs1, rs2);
-            }
-            Instruction::Sltu { rd, rs1, rs2 } => {
-                self.sltu(rd, rs1, rs2);
-            }
-            Instruction::Xor { rd, rs1, rs2 } => {
-                self.xor(rd, rs1, rs2);
-            }
-            Instruction::Srl{ rd, rs1, rs2 } => {
-                self.srl(rd, rs1, rs2);
-            }
-            Instruction::Sra { rd, rs1, rs2 } => {
-                self.sra(rd, rs1, rs2);
-            }
-            Instruction::Or { rd, rs1, rs2 } => {
-                self.or(rd, rs1, rs2);
-            }
-            Instruction::And { rd, rs1, rs2 } => {
-                self.and(rd, rs1, rs2);
-            }
-            Instruction::Addi { rd, rs1, imm } => {
-                self.addi(rd, rs1, imm);
-            }
-            Instruction::Jump { target } => {
-                self.jump(target);
-            }
-        }
-    }
-
     fn run(&mut self, program: Vec<Instruction>) {
         while self.pc < program.len() {
             let inst = program[self.pc];
@@ -364,5 +215,59 @@ mod tests {
 
         cpu.srl(4, 1, 2);        // 邏輯右移:-8 當 u32 >> 1,補0,變一個大正數
         assert_eq!(cpu.registers[4], 2147483644);   // (0xFFFFFFF8 >> 1) = 0x7FFFFFFC
+    }
+
+    #[test]
+    fn test_sll() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        cpu.addi(1, 0, 1);  //x1 = 1
+        cpu.addi(2, 0, 4);  //x2 = 4 (位移4位)
+        cpu.sll(3, 1, 2);   //x3 = 1 << 4 = 16
+        assert_eq!(cpu.registers[3], 16);
+    }
+
+    #[test]
+    fn test_slt_vs_sltu() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        cpu.addi(1, 0, -1); //x1 = -1
+        cpu.addi(2, 0, 5);  //x2 = 1 (位移1位)
+        cpu.slt(3, 1, 2);   //有號:-1 < 5，成立
+        assert_eq!(cpu.registers[3], 1);
+        cpu.sltu(4, 1, 2);  //無號:-1 當大數，不 < 5 -> 0
+        assert_eq!(cpu.registers[4], 0);
+    }
+
+    #[test]
+    fn test_xori_andi_ori() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        cpu.addi(1, 0, 0b1100);
+        cpu.xori(2, 1, 0b1010);
+        assert_eq!(cpu.registers[2], 6);
+        cpu.andi(3, 1, 0b1010);
+        assert_eq!(cpu.registers[3], 8);
+        cpu.ori(4,1,0b1010);
+        assert_eq!(cpu.registers[4], 14);
+    }
+
+    #[test]
+    fn test_slti_sltiu() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        cpu.addi(1, 0, -1);       // x1 = -1
+        cpu.slti(2, 1, 5);        // 有號:-1 < 5 → 1
+        assert_eq!(cpu.registers[2], 1);
+        cpu.sltiu(3, 1, 5);       // 無號:-1 當大數,不 < 5 → 0
+        assert_eq!(cpu.registers[3], 0);
+    }
+
+    #[test]
+    fn test_slli_srli_srai() {
+        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        cpu.addi(1, 0, -8);       // x1 = -8
+        cpu.slli(2, 1, 1);        // -8 << 1 = -16
+        assert_eq!(cpu.registers[2], -16);
+        cpu.srai(3, 1, 1);        // 算術右移 -8 >> 1 = -4 (補符號)
+        assert_eq!(cpu.registers[3], -4);
+        cpu.srli(4, 1, 1);        // 邏輯右移 補0 → 大正數
+        assert_eq!(cpu.registers[4], 2147483644);
     }
 }

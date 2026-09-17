@@ -62,48 +62,49 @@ RV32I 是 32-bit 的基本整數指令集，該指令集會使用到32個暫存�
 為了方便， RISC-V 將一個 WORD 的大小設成 4 Bytes (32 bits) ，同時， RISC-V 的指令長度也是 32 bits，這些空間會被分割成好幾個 fields，不同類型的指令都會有不同的分配方式。
 
 ### 總表
-> 狀態：[x] 已做 ｜ [ ] 未做 ｜ [~] 簡化版
+> 狀態： :ballot_box_with_check: 已做 |  :white_square_button: 未做 | :black_square_button: 簡化版
+
 > funct7 欄：`-` 表示該 type 不使用 funct7
 
 | 狀態 | Type | 指令 | opcode | funct3 | funct7 | 作用 |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-- |
-| [x] | R | ADD | 0110011 | 000 | 0000000 | rd = rs1 + rs2 |
-| [x] | R | SUB | 0110011 | 000 | 0100000 | rd = rs1 − rs2 |
-| [ ] | R | SLL | 0110011 | 001 | 0000000 | rd = rs1 << rs2（邏輯左移）|
-| [ ] | R | SLT | 0110011 | 010 | 0000000 | rd = (rs1 < rs2) ? 1 : 0（有號）|
-| [ ] | R | SLTU | 0110011 | 011 | 0000000 | rd = (rs1 < rs2) ? 1 : 0（無號）|
-| [ ] | R | XOR | 0110011 | 100 | 0000000 | rd = rs1 ^ rs2 |
-| [ ] | R | SRL | 0110011 | 101 | 0000000 | rd = rs1 >> rs2（邏輯右移）|
-| [ ] | R | SRA | 0110011 | 101 | 0100000 | rd = rs1 >> rs2（算術右移，保符號）|
-| [ ] | R | OR | 0110011 | 110 | 0000000 | rd = rs1 \| rs2 |
-| [ ] | R | AND | 0110011 | 111 | 0000000 | rd = rs1 & rs2 |
-| [x] | I | ADDI | 0010011 | 000 | - | rd = rs1 + imm |
-| [ ] | I | SLTI | 0010011 | 010 | - | rd = (rs1 < imm) ? 1 : 0（有號）|
-| [ ] | I | SLTIU | 0010011 | 011 | - | rd = (rs1 < imm) ? 1 : 0（無號）|
-| [ ] | I | XORI | 0010011 | 100 | - | rd = rs1 ^ imm |
-| [ ] | I | ORI | 0010011 | 110 | - | rd = rs1 \| imm |
-| [ ] | I | ANDI | 0010011 | 111 | - | rd = rs1 & imm |
-| [ ] | I | SLLI | 0010011 | 001 | 0000000 | rd = rs1 << shamt（shamt=imm低5位）|
-| [ ] | I | SRLI | 0010011 | 101 | 0000000 | rd = rs1 >> shamt（邏輯）|
-| [ ] | I | SRAI | 0010011 | 101 | 0100000 | rd = rs1 >> shamt（算術）|
-| [ ] | I | LB | 0000011 | 000 | - | rd = mem[rs1+imm]（1 byte，有號延伸）|
-| [ ] | I | LH | 0000011 | 001 | - | rd = mem[rs1+imm]（2 bytes，有號延伸）|
-| [ ] | I | LW | 0000011 | 010 | - | rd = mem[rs1+imm]（4 bytes）|
-| [ ] | I | LBU | 0000011 | 100 | - | rd = mem[rs1+imm]（1 byte，無號）|
-| [ ] | I | LHU | 0000011 | 101 | - | rd = mem[rs1+imm]（2 bytes，無號）|
-| [ ] | S | SB | 0100011 | 000 | - | mem[rs1+imm] = rs2（1 byte）|
-| [ ] | S | SH | 0100011 | 001 | - | mem[rs1+imm] = rs2（2 bytes）|
-| [ ] | S | SW | 0100011 | 010 | - | mem[rs1+imm] = rs2（4 bytes）|
-| [ ] | B | BEQ | 1100011 | 000 | - | if rs1 == rs2, pc += imm |
-| [ ] | B | BNE | 1100011 | 001 | - | if rs1 != rs2, pc += imm |
-| [ ] | B | BLT | 1100011 | 100 | - | if rs1 < rs2, pc += imm（有號）|
-| [ ] | B | BGE | 1100011 | 101 | - | if rs1 >= rs2, pc += imm（有號）|
-| [ ] | B | BLTU | 1100011 | 110 | - | if rs1 < rs2, pc += imm（無號）|
-| [ ] | B | BGEU | 1100011 | 111 | - | if rs1 >= rs2, pc += imm（無號）|
-| [ ] | U | LUI | 0110111 | - | - | rd = imm << 12 |
-| [ ] | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
-| [~] | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm（目前簡化版）|
-| [ ] | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
-| [ ] | - | FENCE | 0001111 | 000 | - | 記憶體屏障（模擬器可當 nop）|
-| [ ] | I | ECALL | 1110011 | 000 | - | 系統呼叫（imm=0）|
-| [ ] | I | EBREAK | 1110011 | 000 | - | 除錯中斷（imm=1）|
+| :ballot_box_with_check: | R | ADD | 0110011 | 000 | 0000000 | rd = rs1 + rs2 |
+| :ballot_box_with_check: | R | SUB | 0110011 | 000 | 0100000 | rd = rs1 − rs2 |
+| :ballot_box_with_check: | R | SLL | 0110011 | 001 | 0000000 | rd = rs1 << rs2（邏輯左移）|
+| :ballot_box_with_check: | R | SLT | 0110011 | 010 | 0000000 | rd = (rs1 < rs2) ? 1 : 0（有號）|
+| :ballot_box_with_check: | R | SLTU | 0110011 | 011 | 0000000 | rd = (rs1 < rs2) ? 1 : 0（無號）|
+| :ballot_box_with_check: | R | XOR | 0110011 | 100 | 0000000 | rd = rs1 ^ rs2 |
+| :ballot_box_with_check: | R | SRL | 0110011 | 101 | 0000000 | rd = rs1 >> rs2（邏輯右移）|
+| :ballot_box_with_check: | R | SRA | 0110011 | 101 | 0100000 | rd = rs1 >> rs2（算術右移，保符號）|
+| :ballot_box_with_check: | R | OR | 0110011 | 110 | 0000000 | rd = rs1 \| rs2 |
+| :ballot_box_with_check: | R | AND | 0110011 | 111 | 0000000 | rd = rs1 & rs2 |
+| :ballot_box_with_check: | I | ADDI | 0010011 | 000 | - | rd = rs1 + imm |
+| :ballot_box_with_check: | I | SLTI | 0010011 | 010 | - | rd = (rs1 < imm) ? 1 : 0（有號）|
+| :ballot_box_with_check: | I | SLTIU | 0010011 | 011 | - | rd = (rs1 < imm) ? 1 : 0（無號）|
+| :ballot_box_with_check: | I | XORI | 0010011 | 100 | - | rd = rs1 ^ imm |
+| :ballot_box_with_check: | I | ORI | 0010011 | 110 | - | rd = rs1 \| imm |
+| :ballot_box_with_check: | I | ANDI | 0010011 | 111 | - | rd = rs1 & imm |
+| :ballot_box_with_check: | I | SLLI | 0010011 | 001 | 0000000 | rd = rs1 << shamt（shamt=imm低5位）|
+| :ballot_box_with_check: | I | SRLI | 0010011 | 101 | 0000000 | rd = rs1 >> shamt（邏輯）|
+| :ballot_box_with_check: | I | SRAI | 0010011 | 101 | 0100000 | rd = rs1 >> shamt（算術）|
+| :white_square_button: | I | LB | 0000011 | 000 | - | rd = mem[rs1+imm]（1 byte，有號延伸）|
+| :white_square_button: | I | LH | 0000011 | 001 | - | rd = mem[rs1+imm]（2 bytes，有號延伸）|
+| :white_square_button: | I | LW | 0000011 | 010 | - | rd = mem[rs1+imm]（4 bytes）|
+| :white_square_button: | I | LBU | 0000011 | 100 | - | rd = mem[rs1+imm]（1 byte，無號）|
+| :white_square_button: | I | LHU | 0000011 | 101 | - | rd = mem[rs1+imm]（2 bytes，無號）|
+| :white_square_button: | S | SB | 0100011 | 000 | - | mem[rs1+imm] = rs2（1 byte）|
+| :white_square_button: | S | SH | 0100011 | 001 | - | mem[rs1+imm] = rs2（2 bytes）|
+| :white_square_button: | S | SW | 0100011 | 010 | - | mem[rs1+imm] = rs2（4 bytes）|
+| :white_square_button: | B | BEQ | 1100011 | 000 | - | if rs1 == rs2, pc += imm |
+| :white_square_button: | B | BNE | 1100011 | 001 | - | if rs1 != rs2, pc += imm |
+| :white_square_button: | B | BLT | 1100011 | 100 | - | if rs1 < rs2, pc += imm（有號）|
+| :white_square_button: | B | BGE | 1100011 | 101 | - | if rs1 >= rs2, pc += imm（有號）|
+| :white_square_button: | B | BLTU | 1100011 | 110 | - | if rs1 < rs2, pc += imm（無號）|
+| :white_square_button: | B | BGEU | 1100011 | 111 | - | if rs1 >= rs2, pc += imm（無號）|
+| :white_square_button: | U | LUI | 0110111 | - | - | rd = imm << 12 |
+| :white_square_button: | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
+| :black_square_button: | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm（目前簡化版）|
+| :white_square_button: | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
+| :white_square_button: | - | FENCE | 0001111 | 000 | - | 記憶體屏障（模擬器可當 nop）|
+| :white_square_button: | I | ECALL | 1110011 | 000 | - | 系統呼叫（imm=0）|
+| :white_square_button: | I | EBREAK | 1110011 | 000 | - | 除錯中斷（imm=1）|
