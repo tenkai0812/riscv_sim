@@ -200,10 +200,33 @@ impl CPU {
     pub fn jump(&mut self, target: usize) {
         self.pc = target;
     }
+        // SW: mem[rs1 + imm] = rs2
+    pub fn sw(&mut self, rs1: usize, rs2: usize, imm: i32) {
+        let addr = (self.registers[rs1] + imm) as usize;   // 算位址
+        self.memory.write_word(addr, self.registers[rs2]); // 寫進記憶體
+        self.pc += 1;
+    }
+
+    // LW: rd = mem[rs1 + imm]
+    pub fn lw(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            let addr = (self.registers[rs1] + imm) as usize;
+            self.registers[rd] = self.memory.read_word(addr);  // 從記憶體讀
+        }
+        self.pc += 1;
+    }
 
     pub fn execute(&mut self, inst: Instruction) {
         match inst {
-
+            Instruction::Lw { rd, rs1, imm } => {
+                self.lw(rd, rs1, imm);
+            }
+            Instruction::Sw { rs1, rs2, imm} => {
+                self.sw(rs1, rs2, imm);
+            }
+            Instruction::Add { rd, rs1, rs2 } => {
+                self.add(rd, rs1, rs2);
+            }
             Instruction::Add { rd, rs1, rs2 } => {
                 self.add(rd, rs1, rs2);
             }

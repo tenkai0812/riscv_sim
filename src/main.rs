@@ -1,11 +1,13 @@
 mod decode;
+mod memory;
 mod execute;
 mod instruction;
 
 use instruction::Instruction;
+use memory::Memory;
 pub struct CPU {
     registers: [i32; 32],
-    memory: Vec<i32>,
+    memory: Memory,
     pc: usize,
 }
 
@@ -26,6 +28,7 @@ impl CPU {
     }
 }
 
+
 fn main() {}
 
 #[cfg(test)]
@@ -38,7 +41,7 @@ mod tests {
     fn test_addi_basic() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         cpu.addi(1, 0, 5);
@@ -49,7 +52,7 @@ mod tests {
     fn test_x0_stays_zero() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         cpu.addi(0, 0, 5);
@@ -60,7 +63,7 @@ mod tests {
     fn test_add() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         cpu.addi(1, 0, 3);
@@ -73,7 +76,7 @@ mod tests {
     fn test_sub() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         cpu.addi(1, 0, 10);
@@ -86,7 +89,7 @@ mod tests {
     fn test_execute() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         cpu.execute(Instruction::Addi {
@@ -101,7 +104,7 @@ mod tests {
     fn test_run_program() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         let program = vec![
@@ -129,7 +132,7 @@ mod tests {
     fn test_jump() {
         let mut cpu = CPU {
             registers: [0; 32],
-            memory: vec![0; 100],
+            memory: Memory::new(100),
             pc: 0,
         };
         let program = vec![
@@ -194,7 +197,11 @@ mod tests {
 
     #[test]
     fn test_run_binary() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0
+        };
         let program: Vec<u32> = vec![
             0x00500093,   // addi x1, x0, 5
             0x00300113,   // addi x2, x0, 3
@@ -206,7 +213,11 @@ mod tests {
 
     #[test]
     fn test_sra_vs_srl() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0
+        };
         cpu.addi(1, 0, -8);      // x1 = -8 (負數!)
         cpu.addi(2, 0, 1);       // x2 = 1 (移 1 位)
 
@@ -219,7 +230,11 @@ mod tests {
 
     #[test]
     fn test_sll() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0
+        };
         cpu.addi(1, 0, 1);  //x1 = 1
         cpu.addi(2, 0, 4);  //x2 = 4 (位移4位)
         cpu.sll(3, 1, 2);   //x3 = 1 << 4 = 16
@@ -228,7 +243,11 @@ mod tests {
 
     #[test]
     fn test_slt_vs_sltu() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0
+        };
         cpu.addi(1, 0, -1); //x1 = -1
         cpu.addi(2, 0, 5);  //x2 = 1 (位移1位)
         cpu.slt(3, 1, 2);   //有號:-1 < 5，成立
@@ -239,7 +258,11 @@ mod tests {
 
     #[test]
     fn test_xori_andi_ori() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0,
+        };
         cpu.addi(1, 0, 0b1100);
         cpu.xori(2, 1, 0b1010);
         assert_eq!(cpu.registers[2], 6);
@@ -251,7 +274,11 @@ mod tests {
 
     #[test]
     fn test_slti_sltiu() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0,
+        };
         cpu.addi(1, 0, -1);       // x1 = -1
         cpu.slti(2, 1, 5);        // 有號:-1 < 5 → 1
         assert_eq!(cpu.registers[2], 1);
@@ -261,7 +288,11 @@ mod tests {
 
     #[test]
     fn test_slli_srli_srai() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0,
+        };
         cpu.addi(1, 0, -8);       // x1 = -8
         cpu.slli(2, 1, 1);        // -8 << 1 = -16
         assert_eq!(cpu.registers[2], -16);
@@ -272,7 +303,11 @@ mod tests {
     }
     #[test]
     fn test_branch_loop() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0,
+        };
         // 用迴圈把 x1 累加到 5:
         // x1 = 0; while x1 != 5 { x1 += 1 }
         let program = vec![
@@ -286,7 +321,11 @@ mod tests {
     }
     #[test]
     fn test_beq() {
-        let mut cpu = CPU { registers: [0; 32], memory: vec![0; 100], pc: 0 };
+        let mut cpu = CPU {
+            registers: [0; 32],
+            memory: Memory::new(100),
+            pc: 0,
+        };
         let program = vec![
             Instruction::Addi { rd: 1, rs1: 0, imm: 5 },   // [0] x1 = 5
             Instruction::Addi { rd: 2, rs1: 0, imm: 5 },   // [1] x2 = 5
@@ -310,5 +349,15 @@ mod tests {
     fn test_decode_beq() {
         let decoded = decode(0x00208463);   // beq x1, x2, 8
         assert_eq!(decoded, Instruction::Beq { rs1: 1, rs2: 2, imm: 8 });
+    }
+
+    #[test]
+    fn test_sw_lw() {
+        let mut cpu = CPU { registers: [0; 32], memory: Memory::new(100), pc: 0 };
+        cpu.addi(1, 0, 40);       // x1 = 40 (基底位址)
+        cpu.addi(2, 0, 12345);    // x2 = 12345 (要存的值)
+        cpu.sw(1, 2, 0);          // mem[x1 + 0] = x2  → mem[40] = 12345
+        cpu.lw(3, 1, 0);          // x3 = mem[x1 + 0]  → x3 = 12345
+        assert_eq!(cpu.registers[3], 12345);   // 存進去再讀出來,一致!
     }
 }

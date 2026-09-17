@@ -1,4 +1,4 @@
-use std::{arch::x86_64::_MM_FROUND_CUR_DIRECTION, time::Instant};
+use core::panic;
 
 use crate::instruction::Instruction;
 
@@ -41,6 +41,13 @@ pub fn get_imm_b(inst: u32) -> i32 {
     let imm4_1 = ((inst >> 8) & 0b1111) << 1;
     let imm = imm12 | imm11 | imm10_5 | imm4_1;
     (imm << 19) as i32 >> 19
+}
+
+pub fn get_imm_s(inst: u32) -> i32 {
+    let imm11_5 = ((inst >> 25) & 0b1111111) << 5;
+    let imm4_0 = (inst >> 7) & 0b11111;
+    let imm = imm11_5 | imm4_0;
+    (imm << 20) as i32 >> 20
 }
 
 pub fn decode(inst: u32) -> Instruction {
@@ -112,6 +119,28 @@ pub fn decode(inst: u32) -> Instruction {
                 0b110 => Instruction::Bltu  { rs1, rs2, imm },
                 0b111 => Instruction::Bgeu  { rs1, rs2, imm },
                 _ => panic!("unknown B-Type instruction"),
+            }
+        }
+        0b0000011 => {
+            let rd = get_rd(inst) as usize;
+            let rs1 = get_rs1(inst) as usize;
+            let funct3 = get_funct3(inst);
+            let imm = get_imm_i(inst);
+
+            match funct3 {
+                0b010 => Instruction::Lw { rd, rs1, imm },
+                _ => panic!("unknown load"),
+            }
+        }
+        0b0100011 => {
+            let rs1 = get_rs1(inst) as usize;
+            let rs2 = get_rs2(inst) as usize;
+            let funct3 = get_funct3(inst);
+            let imm = get_imm_s(inst);
+
+            match funct3 {
+                0b010 => Instruction::Sw { rs1, rs2, imm },
+                _ => panic!("unknown store")
             }
         }
         _ => panic!("unknown opcode"),
