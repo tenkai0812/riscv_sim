@@ -1,0 +1,23 @@
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Instruction {
+    Add     { rd: usize, rs1: usize, rs2: usize },
+    Sub     { rd: usize, rs1: usize, rs2: usize },
+    Sll     { rd: usize, rs1: usize, rs2: usize },
+    Slt     { rd: usize, rs1: usize, rs2: usize },
+    Sltu    { rd: usize, rs1: usize, rs2: usize },
+    Xor     { rd: usize, rs1: usize, rs2: usize },
+    Srl     { rd: usize, rs1: usize, rs2: usize },
+    Sra     { rd: usize, rs1: usize, rs2: usize },
+    Or      { rd: usize, rs1: usize, rs2: usize },
+    And     { rd: usize, rs1: usize, rs2: usize },
+    Addi    { rd: usize, rs1: usize, imm: i32 },
+    Slti    { rd: usize, rs1: usize, imm: i32 },
+    Sltiu   { rd: usize, rs1: usize, imm: i32 },
+    Xori    { rd: usize, rs1: usize, imm: i32 },
+    Ori     { rd: usize, rs1: usize, imm: i32 },
+    Andi    { rd: usize, rs1: usize, imm: i32 },
+    Slli    { rd: usize, rs1: usize, shamt: u32},
+    Srli    { rd: usize, rs1: usize, shamt: u32},
+    Srai    { rd: usize, rs1: usize, shamt: u32},
+    Jump    { target: usize },
+}
