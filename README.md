@@ -95,12 +95,12 @@ RV32I 是 32-bit 的基本整數指令集，該指令集會使用到32個暫存�
 | :white_square_button: | S | SB | 0100011 | 000 | - | mem[rs1+imm] = rs2（1 byte）|
 | :white_square_button: | S | SH | 0100011 | 001 | - | mem[rs1+imm] = rs2（2 bytes）|
 | :white_square_button: | S | SW | 0100011 | 010 | - | mem[rs1+imm] = rs2（4 bytes）|
-| :white_square_button: | B | BEQ | 1100011 | 000 | - | if rs1 == rs2, pc += imm |
-| :white_square_button: | B | BNE | 1100011 | 001 | - | if rs1 != rs2, pc += imm |
-| :white_square_button: | B | BLT | 1100011 | 100 | - | if rs1 < rs2, pc += imm（有號）|
-| :white_square_button: | B | BGE | 1100011 | 101 | - | if rs1 >= rs2, pc += imm（有號）|
-| :white_square_button: | B | BLTU | 1100011 | 110 | - | if rs1 < rs2, pc += imm（無號）|
-| :white_square_button: | B | BGEU | 1100011 | 111 | - | if rs1 >= rs2, pc += imm（無號）|
+| :ballot_box_with_check: | B | BEQ | 1100011 | 000 | - | if rs1 == rs2, pc += imm |
+| :ballot_box_with_check: | B | BNE | 1100011 | 001 | - | if rs1 != rs2, pc += imm |
+| :ballot_box_with_check: | B | BLT | 1100011 | 100 | - | if rs1 < rs2, pc += imm（有號）|
+| :ballot_box_with_check: | B | BGE | 1100011 | 101 | - | if rs1 >= rs2, pc += imm（有號）|
+| :ballot_box_with_check: | B | BLTU | 1100011 | 110 | - | if rs1 < rs2, pc += imm（無號）|
+| :ballot_box_with_check: | B | BGEU | 1100011 | 111 | - | if rs1 >= rs2, pc += imm（無號）|
 | :white_square_button: | U | LUI | 0110111 | - | - | rd = imm << 12 |
 | :white_square_button: | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
 | :black_square_button: | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm（目前簡化版）|
