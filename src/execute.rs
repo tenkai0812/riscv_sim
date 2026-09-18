@@ -200,33 +200,77 @@ impl CPU {
     pub fn jump(&mut self, target: usize) {
         self.pc = target;
     }
-        // SW: mem[rs1 + imm] = rs2
-    pub fn sw(&mut self, rs1: usize, rs2: usize, imm: i32) {
-        let addr = (self.registers[rs1] + imm) as usize;   // 算位址
-        self.memory.write_word(addr, self.registers[rs2]); // 寫進記憶體
-        self.pc += 1;
-    }
 
     // LW: rd = mem[rs1 + imm]
     pub fn lw(&mut self, rd: usize, rs1: usize, imm: i32) {
         if rd != 0 {
             let addr = (self.registers[rs1] + imm) as usize;
-            self.registers[rd] = self.memory.read_word(addr);  // 從記憶體讀
+            self.registers[rd] = self.memory.read_word(addr) as i32;  // 從記憶體讀
         }
+        self.pc += 1;
+    }
+
+    // LH:讀 byte,有號延伸(把 byte 當有號數)
+    pub fn lh(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            let addr = (self.registers[rs1] + imm) as usize;
+            let byte = self.memory.read_half(addr); //get raw u8
+            self.registers[rd] = byte as i16 as i32; //as i8 -> as i32
+        }
+        self.pc += 1;
+    }
+
+    // LHU:讀 byte,無號延伸(補0)
+    pub fn lhu(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            let addr = (self.registers[rs1] + imm) as usize;
+            let byte = self.memory.read_half(addr);
+            self.registers[rd] = byte as i32;
+        }
+    }
+
+    // LB:讀 byte,有號延伸(把 byte 當有號數)
+    pub fn lb(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            let addr = (self.registers[rs1] + imm) as usize;
+            let byte = self.memory.read_byte(addr); //get raw u8
+            self.registers[rd] = byte as i8 as i32; //as i8 -> as i32
+        }
+        self.pc += 1;
+    }
+
+    // LBU:讀 byte,無號延伸(補0)
+    pub fn lbu(&mut self, rd: usize, rs1: usize, imm: i32) {
+        if rd != 0 {
+            let addr = (self.registers[rs1] + imm) as usize;
+            let byte = self.memory.read_byte(addr);
+            self.registers[rd] = byte as i32;
+        }
+    }
+
+    // SW: mem[rs1 + imm] = rs2
+    pub fn sw(&mut self, rs1: usize, rs2: usize, imm: i32) {
+        let addr = (self.registers[rs1] + imm) as usize;   // 算位址
+        self.memory.write_word(addr, self.registers[rs2] as u32); // 寫進記憶體
+        self.pc += 1;
+    }
+
+    //SB:寫 byte(取暫存器低 8 位)
+    pub fn sh(&mut self, rs1: usize, rs2: usize, imm: i32) {
+        let addr = (self.registers[rs1] + imm) as usize;
+        self.memory.write_half(addr, self.registers[rs2] as u16);
+        self.pc += 1;
+    }
+
+    //SB:寫 byte(取暫存器低 8 位)
+    pub fn sb(&mut self, rs1: usize, rs2: usize, imm: i32) {
+        let addr = (self.registers[rs1] + imm) as usize;
+        self.memory.write_byte(addr, self.registers[rs2] as u8);
         self.pc += 1;
     }
 
     pub fn execute(&mut self, inst: Instruction) {
         match inst {
-            Instruction::Lw { rd, rs1, imm } => {
-                self.lw(rd, rs1, imm);
-            }
-            Instruction::Sw { rs1, rs2, imm} => {
-                self.sw(rs1, rs2, imm);
-            }
-            Instruction::Add { rd, rs1, rs2 } => {
-                self.add(rd, rs1, rs2);
-            }
             Instruction::Add { rd, rs1, rs2 } => {
                 self.add(rd, rs1, rs2);
             }
@@ -301,6 +345,30 @@ impl CPU {
             }
             Instruction::Bgeu { rs1, rs2, imm } => {
                 self.bgeu(rs1, rs2, imm);
+            }
+            Instruction::Lw { rd, rs1, imm } => {
+                self.lw(rd, rs1, imm);
+            }
+            Instruction::Lh { rd, rs1, imm } => {
+                self.lh(rd, rs1, imm);
+            }
+            Instruction::Lhu { rd, rs1, imm } => {
+                self.lhu(rd, rs1, imm);
+            }
+            Instruction::Lb { rd, rs1, imm } => {
+                self.lb(rd, rs1, imm);
+            }
+            Instruction::Lbu { rd, rs1, imm } => {
+                self.lbu(rd, rs1, imm);
+            }
+            Instruction::Sw { rs1, rs2, imm} => {
+                self.sw(rs1, rs2, imm);
+            }
+            Instruction::Sh { rs1, rs2, imm } => {
+                self.sh(rs1, rs2, imm);
+            }
+            Instruction::Sb { rs1, rs2, imm } => {
+                self.sb(rs1, rs2, imm);
             }
             Instruction::Jump { target } => {
                 self.jump(target);

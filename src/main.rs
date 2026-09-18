@@ -360,4 +360,28 @@ mod tests {
         cpu.lw(3, 1, 0);          // x3 = mem[x1 + 0]  → x3 = 12345
         assert_eq!(cpu.registers[3], 12345);   // 存進去再讀出來,一致!
     }
+
+    #[test]
+    fn test_lb_lbu() {
+        let mut cpu = CPU { registers: [0; 32], memory: Memory::new(100), pc: 0 };
+        cpu.addi(1, 0, 40);        // 位址 40
+        cpu.addi(2, 0, 0xFF);      // x2 低 8 位 = 0xFF
+        cpu.sb(1, 2, 0);           // 存 byte 0xFF 到 mem[40]
+        cpu.lb(3, 1, 0);           // 有號:0xFF → -1
+        assert_eq!(cpu.registers[3], -1);
+        cpu.lbu(4, 1, 0);          // 無號:0xFF → 255
+        assert_eq!(cpu.registers[4], 255);
+    }
+
+    #[test]
+    fn test_lh_lhu() {
+        let mut cpu = CPU { registers: [0; 32], memory: Memory::new(100), pc: 0 };
+        cpu.addi(1, 0, 40);
+        cpu.addi(2, 0, 0xFFFF);    // 低 16 位 = 0xFFFF
+        cpu.sh(1, 2, 0);
+        cpu.lh(3, 1, 0);           // 有號:0xFFFF → -1
+        assert_eq!(cpu.registers[3], -1);
+        cpu.lhu(4, 1, 0);          // 無號:0xFFFF → 65535
+        assert_eq!(cpu.registers[4], 65535);
+    }
 }

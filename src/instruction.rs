@@ -1,7 +1,5 @@
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Instruction {
-    Lw      { rd: usize, rs1: usize, imm: i32 },
-    Sw      { rs1: usize, rs2: usize, imm: i32 },
     Add     { rd: usize, rs1: usize, rs2: usize },
     Sub     { rd: usize, rs1: usize, rs2: usize },
     Sll     { rd: usize, rs1: usize, rs2: usize },
@@ -27,5 +25,13 @@ pub enum Instruction {
     Bge     { rs1: usize, rs2: usize, imm: i32 },
     Bltu    { rs1: usize, rs2: usize, imm: i32 },
     Bgeu    { rs1: usize, rs2: usize, imm: i32 },
+    Lw      { rd: usize, rs1: usize, imm: i32 },
+    Lh      { rd: usize, rs1: usize, imm: i32 },
+    Lhu     { rd: usize, rs1: usize, imm: i32 },
+    Lb      { rd: usize, rs1: usize, imm: i32 },
+    Lbu     { rd: usize, rs1: usize, imm: i32 },
+    Sw      { rs1: usize, rs2: usize, imm: i32 },
+    Sh      { rs1: usize, rs2: usize, imm: i32 },
+    Sb      { rs1: usize, rs2: usize, imm: i32 },
     Jump    { target: usize },
 }

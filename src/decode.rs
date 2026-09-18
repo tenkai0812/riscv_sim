@@ -121,6 +121,7 @@ pub fn decode(inst: u32) -> Instruction {
                 _ => panic!("unknown B-Type instruction"),
             }
         }
+
         0b0000011 => {
             let rd = get_rd(inst) as usize;
             let rs1 = get_rs1(inst) as usize;
@@ -128,10 +129,13 @@ pub fn decode(inst: u32) -> Instruction {
             let imm = get_imm_i(inst);
 
             match funct3 {
+                0b000 => Instruction::Lb { rd, rs1, imm },
                 0b010 => Instruction::Lw { rd, rs1, imm },
+                0b100 => Instruction::Lbu { rd, rs1, imm },
                 _ => panic!("unknown load"),
             }
         }
+
         0b0100011 => {
             let rs1 = get_rs1(inst) as usize;
             let rs2 = get_rs2(inst) as usize;
@@ -139,10 +143,13 @@ pub fn decode(inst: u32) -> Instruction {
             let imm = get_imm_s(inst);
 
             match funct3 {
+                0b000 => Instruction::Sb { rs1, rs2, imm },
                 0b010 => Instruction::Sw { rs1, rs2, imm },
                 _ => panic!("unknown store")
             }
         }
+
+
         _ => panic!("unknown opcode"),
     }
 }
