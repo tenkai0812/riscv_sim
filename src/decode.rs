@@ -50,6 +50,10 @@ pub fn get_imm_s(inst: u32) -> i32 {
     (imm << 20) as i32 >> 20
 }
 
+pub fn get_imm_u(inst: u32) -> i32 {
+    (inst & 0xfffff000) as i32
+}
+
 pub fn decode(inst: u32) -> Instruction {
     let opcode = get_opcode(inst);
 
@@ -130,8 +134,10 @@ pub fn decode(inst: u32) -> Instruction {
 
             match funct3 {
                 0b000 => Instruction::Lb { rd, rs1, imm },
+                0b001 => Instruction::Lh { rd, rs1, imm },
                 0b010 => Instruction::Lw { rd, rs1, imm },
                 0b100 => Instruction::Lbu { rd, rs1, imm },
+                0b101 => Instruction::Lhu { rd, rs1, imm },
                 _ => panic!("unknown load"),
             }
         }
@@ -144,12 +150,23 @@ pub fn decode(inst: u32) -> Instruction {
 
             match funct3 {
                 0b000 => Instruction::Sb { rs1, rs2, imm },
+                0b001 => Instruction::Sh { rs1, rs2, imm },
                 0b010 => Instruction::Sw { rs1, rs2, imm },
                 _ => panic!("unknown store")
             }
         }
 
+        0b0110111 => {
+            let rd = get_rd(inst) as usize;
+            let imm = get_imm_u(inst);
+            Instruction::Lui { rd, imm }
+        }
 
+        0b0010111 => {
+            let rd = get_rd(inst) as usize;
+            let imm = get_imm_u(inst);
+            Instruction::Auipc { rd, imm }
+        }
         _ => panic!("unknown opcode"),
     }
 }

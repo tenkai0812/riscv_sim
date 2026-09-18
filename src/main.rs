@@ -384,4 +384,30 @@ mod tests {
         cpu.lhu(4, 1, 0);          // 無號:0xFFFF → 65535
         assert_eq!(cpu.registers[4], 65535);
     }
+
+    #[test]
+    fn test_load_store_via_run() {
+        let mut cpu = CPU { registers: [0; 32], memory: Memory::new(100), pc: 0 };
+        let program = vec![
+            Instruction::Addi { rd: 1, rs1: 0, imm: 40 },   // x1 = 40
+            Instruction::Addi { rd: 2, rs1: 0, imm: 0xFF }, // x2 = 255
+            Instruction::Sb   { rs1: 1, rs2: 2, imm: 0 },   // 存 byte
+            Instruction::Lbu  { rd: 3, rs1: 1, imm: 0 },    // 無號讀 → 255
+        ];
+        cpu.run(program);   // ← 透過 run!會經過 pc,抓得到 lbu 的 pc bug
+        assert_eq!(cpu.registers[3], 255);
+    }
+
+    #[test]
+    fn test_lui() {
+        let mut cpu = CPU { registers: [0; 32], memory: Memory::new(100), pc: 0 };
+        cpu.lui(1, 0x12345000_u32 as i32);   // 直接給高位形式的值
+        assert_eq!(cpu.registers[1], 0x12345000_u32 as i32);
+    }
+    #[test]
+    fn test_decode_lui() {
+        // lui x1, 0x12345 → 機器碼 0x123450b7
+        let decoded = decode(0x123450b7);
+        assert_eq!(decoded, Instruction::Lui { rd: 1, imm: 0x12345000_u32 as i32 });
+    }
 }
