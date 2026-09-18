@@ -35,5 +35,6 @@ pub enum Instruction {
     Sb      { rs1: usize, rs2: usize, imm: i32 },
     Lui     { rd: usize, imm: i32 },
     Auipc   { rd: usize, imm: i32 },
+    Jal     { rd: usize, imm: i32 },
     Jump    { target: usize },
 }

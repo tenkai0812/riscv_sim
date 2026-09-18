@@ -302,6 +302,13 @@ impl CPU {
         self.pc += 1;
     }
 
+    pub fn jal(&mut self, rd: usize, imm: i32) {
+        if rd != 0 {
+            self.registers[rd] = (self.pc + 1) as i32;
+        }
+        self.pc = (self.pc as i32 + imm) as usize;
+    }
+
     pub fn execute(&mut self, inst: Instruction) {
         match inst {
             Instruction::Add { rd, rs1, rs2 } => {
@@ -408,6 +415,9 @@ impl CPU {
             }
             Instruction::Auipc { rd, imm } => {
                 self.auipc(rd, imm);
+            }
+            Instruction::Jal { rd, imm} => {
+                self.jal(rd, imm);
             }
             Instruction::Jump { target } => {
                 self.jump(target);

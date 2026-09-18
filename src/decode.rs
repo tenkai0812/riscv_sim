@@ -54,6 +54,14 @@ pub fn get_imm_u(inst: u32) -> i32 {
     (inst & 0xfffff000) as i32
 }
 
+pub fn get_imm_j(inst: u32) -> i32 {
+    let imm20   = ((inst >> 31) & 0b1) << 20;
+    let imm10_1 = ((inst >> 21) & 0b1111111111) << 1;
+    let imm11 = ((inst >> 20) & 0b1) << 11;
+    let imm19_12 = ((inst >> 12) & 0b11111111) << 12;
+    let imm = imm20 | imm10_1 | imm11 | imm19_12;
+    (imm << 11) as i32 >> 11
+}
 pub fn decode(inst: u32) -> Instruction {
     let opcode = get_opcode(inst);
 
@@ -166,6 +174,12 @@ pub fn decode(inst: u32) -> Instruction {
             let rd = get_rd(inst) as usize;
             let imm = get_imm_u(inst);
             Instruction::Auipc { rd, imm }
+        }
+
+        0b1101111 => {
+            let rd = get_rd(inst) as usize;
+            let imm = get_imm_j(inst);
+            Instruction::Jal { rd, imm }
         }
         _ => panic!("unknown opcode"),
     }
