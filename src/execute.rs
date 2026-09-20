@@ -313,6 +313,20 @@ impl CPU {
         self.pc = target;
     }
 
+    pub fn fence(&mut self) {
+        self.pc += 4;
+    }
+
+    pub fn ecall(&mut self) {
+        self.halt = true;
+        self.pc += 4;
+    }
+
+    pub fn ebreak(&mut self) {
+        self.halt = true;
+        self.pc += 4;
+    }
+
     pub fn load_program(&mut self, program: &[u32], start: usize) {
         for (i, &inst) in program.iter().enumerate() {
             let addr = start + i * 4;
@@ -432,6 +446,15 @@ impl CPU {
             }
             Instruction::Jalr { rd, rs1, imm } => {
                 self.jalr(rd, rs1, imm);
+            }
+            Instruction::Fence => {
+                self.fence();
+            }
+            Instruction::Ecall => {
+                self.ecall();
+            }
+            Instruction::Ebreak => {
+                self.ebreak();
             }
         }
     }

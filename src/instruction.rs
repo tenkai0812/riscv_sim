@@ -37,4 +37,7 @@ pub enum Instruction {
     Auipc   { rd: usize, imm: i32 },
     Jal     { rd: usize, imm: i32 },
     Jalr    { rd: usize, rs1: usize, imm: i32},
+    Fence,
+    Ecall,
+    Ebreak,
 }

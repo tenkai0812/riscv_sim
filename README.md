@@ -104,7 +104,7 @@ RV32I 是 32-bit 的基本整數指令集，該指令集會使用到32個暫存�
 | :ballot_box_with_check: | U | LUI | 0110111 | - | - | rd = imm << 12 |
 | :ballot_box_with_check: | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
 | :ballot_box_with_check: | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm|
-| :ballot_box_with_check:: | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
-| :white_square_button: | - | FENCE | 0001111 | 000 | - | 記憶體屏障（模擬器可當 nop）|
-| :white_square_button: | I | ECALL | 1110011 | 000 | - | 系統呼叫（imm=0）|
-| :white_square_button: | I | EBREAK | 1110011 | 000 | - | 除錯中斷（imm=1）|
+| :ballot_box_with_check: | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
+| :ballot_box_with_check: | - | FENCE | 0001111 | 000 | - | 記憶體屏障（模擬器可當 nop）|
+| :ballot_box_with_check: | I | ECALL | 1110011 | 000 | - | 系統呼叫（imm=0）|
+| :ballot_box_with_check: | I | EBREAK | 1110011 | 000 | - | 除錯中斷（imm=1）|

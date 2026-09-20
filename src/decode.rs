@@ -188,7 +188,18 @@ pub fn decode(inst: u32) -> Instruction {
             let imm = get_imm_i(inst);
             Instruction::Jalr { rd, rs1, imm }
         }
-        
+
+        0b0001111 => Instruction::Fence,
+        0b1110011 => {
+            //ECALL(imm = 0) 和
+            let imm = get_imm_i(inst);
+            match imm {
+                0 => Instruction::Ecall,
+                1 => Instruction::Ebreak,
+                _ => panic!("nuknown system instruction"),
+            }
+        }
+
         _ => panic!("unknown opcode"),
     }
 }
