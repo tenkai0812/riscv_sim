@@ -87,24 +87,24 @@ RV32I 是 32-bit 的基本整數指令集，該指令集會使用到32個暫存�
 | :ballot_box_with_check: | I | SLLI | 0010011 | 001 | 0000000 | rd = rs1 << shamt（shamt=imm低5位）|
 | :ballot_box_with_check: | I | SRLI | 0010011 | 101 | 0000000 | rd = rs1 >> shamt（邏輯）|
 | :ballot_box_with_check: | I | SRAI | 0010011 | 101 | 0100000 | rd = rs1 >> shamt（算術）|
-| :white_square_button: | I | LB | 0000011 | 000 | - | rd = mem[rs1+imm]（1 byte，有號延伸）|
-| :white_square_button: | I | LH | 0000011 | 001 | - | rd = mem[rs1+imm]（2 bytes，有號延伸）|
-| :white_square_button: | I | LW | 0000011 | 010 | - | rd = mem[rs1+imm]（4 bytes）|
-| :white_square_button: | I | LBU | 0000011 | 100 | - | rd = mem[rs1+imm]（1 byte，無號）|
-| :white_square_button: | I | LHU | 0000011 | 101 | - | rd = mem[rs1+imm]（2 bytes，無號）|
-| :white_square_button: | S | SB | 0100011 | 000 | - | mem[rs1+imm] = rs2（1 byte）|
-| :white_square_button: | S | SH | 0100011 | 001 | - | mem[rs1+imm] = rs2（2 bytes）|
-| :white_square_button: | S | SW | 0100011 | 010 | - | mem[rs1+imm] = rs2（4 bytes）|
+| :ballot_box_with_check: | I | LB | 0000011 | 000 | - | rd = mem[rs1+imm]（1 byte，有號延伸）|
+| :ballot_box_with_check: | I | LH | 0000011 | 001 | - | rd = mem[rs1+imm]（2 bytes，有號延伸）|
+| :ballot_box_with_check: | I | LW | 0000011 | 010 | - | rd = mem[rs1+imm]（4 bytes）|
+| :ballot_box_with_check: | I | LBU | 0000011 | 100 | - | rd = mem[rs1+imm]（1 byte，無號）|
+| :ballot_box_with_check: | I | LHU | 0000011 | 101 | - | rd = mem[rs1+imm]（2 bytes，無號）|
+| :ballot_box_with_check: | S | SB | 0100011 | 000 | - | mem[rs1+imm] = rs2（1 byte）|
+| :ballot_box_with_check: | S | SH | 0100011 | 001 | - | mem[rs1+imm] = rs2（2 bytes）|
+| :ballot_box_with_check: | S | SW | 0100011 | 010 | - | mem[rs1+imm] = rs2（4 bytes）|
 | :ballot_box_with_check: | B | BEQ | 1100011 | 000 | - | if rs1 == rs2, pc += imm |
 | :ballot_box_with_check: | B | BNE | 1100011 | 001 | - | if rs1 != rs2, pc += imm |
 | :ballot_box_with_check: | B | BLT | 1100011 | 100 | - | if rs1 < rs2, pc += imm（有號）|
 | :ballot_box_with_check: | B | BGE | 1100011 | 101 | - | if rs1 >= rs2, pc += imm（有號）|
 | :ballot_box_with_check: | B | BLTU | 1100011 | 110 | - | if rs1 < rs2, pc += imm（無號）|
 | :ballot_box_with_check: | B | BGEU | 1100011 | 111 | - | if rs1 >= rs2, pc += imm（無號）|
-| :white_square_button: | U | LUI | 0110111 | - | - | rd = imm << 12 |
-| :white_square_button: | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
-| :black_square_button: | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm（目前簡化版）|
-| :white_square_button: | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
+| :ballot_box_with_check: | U | LUI | 0110111 | - | - | rd = imm << 12 |
+| :ballot_box_with_check: | U | AUIPC | 0010111 | - | - | rd = pc + (imm << 12) |
+| :ballot_box_with_check: | J | JAL | 1101111 | - | - | rd = pc+4; pc += imm|
+| :ballot_box_with_check:: | I | JALR | 1100111 | 000 | - | rd = pc+4; pc = rs1+imm |
 | :white_square_button: | - | FENCE | 0001111 | 000 | - | 記憶體屏障（模擬器可當 nop）|
 | :white_square_button: | I | ECALL | 1110011 | 000 | - | 系統呼叫（imm=0）|
 | :white_square_button: | I | EBREAK | 1110011 | 000 | - | 除錯中斷（imm=1）|

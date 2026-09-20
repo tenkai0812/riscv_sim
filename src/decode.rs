@@ -181,6 +181,14 @@ pub fn decode(inst: u32) -> Instruction {
             let imm = get_imm_j(inst);
             Instruction::Jal { rd, imm }
         }
+
+        0b1100111 => {
+            let rd = get_rd(inst) as usize;
+            let rs1 = get_rs1(inst) as usize;
+            let imm = get_imm_i(inst);
+            Instruction::Jalr { rd, rs1, imm }
+        }
+        
         _ => panic!("unknown opcode"),
     }
 }

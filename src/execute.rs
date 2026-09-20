@@ -7,7 +7,7 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] + self.registers[rs2];
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //暫存器互減
@@ -15,7 +15,7 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] - self.registers[rs2];
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //TODO:
@@ -24,7 +24,7 @@ impl CPU {
             let shift = (self.registers[rs2] & 0b11111) as u32; // 只取低 5 位
             self.registers[rd] = self.registers[rs1] << shift;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //TODO:
@@ -36,7 +36,7 @@ impl CPU {
                 0
             };
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //TODO:
@@ -48,7 +48,7 @@ impl CPU {
                 0
             };
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //TODO:
@@ -56,7 +56,7 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] ^ self.registers[rs2];
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // SRL:邏輯右移(補0)
@@ -65,7 +65,7 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = ((self.registers[rs1] as u32) >> shift) as i32;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //TODO
@@ -74,21 +74,21 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] >> shift;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn or(&mut self, rd: usize, rs1: usize, rs2: usize) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] | self.registers[rs2];
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn and(&mut self, rd: usize, rs1: usize, rs2: usize) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] & self.registers[rs2];
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //加立即數
@@ -97,7 +97,7 @@ impl CPU {
             // rd (distination register) = rs1 (source register) + imm (immediate)
             self.registers[rd] = self.registers[rs1] + imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn slti(&mut self, rd: usize, rs1: usize, imm: i32) {
@@ -108,7 +108,7 @@ impl CPU {
                 0
             };
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn sltiu(&mut self, rd: usize, rs1: usize, imm: i32) {
@@ -119,56 +119,56 @@ impl CPU {
                 0
             };
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn xori(&mut self, rd: usize, rs1: usize, imm: i32) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] ^ imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn ori(&mut self, rd: usize, rs1: usize, imm: i32) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] | imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn andi(&mut self, rd: usize, rs1: usize, imm: i32) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] & imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn slli(&mut self, rd: usize, rs1: usize, shamt: u32) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] << shamt;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn srli(&mut self, rd: usize, rs1: usize, shamt: u32) {
         if rd != 0 {
             self.registers[rd] = ((self.registers[rs1] as u32) >> shamt) as i32;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn srai(&mut self, rd: usize, rs1: usize, shamt: u32) {
         if rd != 0 {
             self.registers[rd] = self.registers[rs1] >> shamt;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn beq(&mut self, rs1: usize, rs2: usize, imm: i32) {
         if self.registers[rs1] == self.registers[rs2] {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
     }
 
@@ -176,7 +176,7 @@ impl CPU {
         if self.registers[rs1] != self.registers[rs2] {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
     }
 
@@ -184,7 +184,7 @@ impl CPU {
         if (self.registers[rs1] as i32) < (self.registers[rs2] as i32) {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
     }
 
@@ -192,7 +192,7 @@ impl CPU {
         if (self.registers[rs1] as i32) >= (self.registers[rs2] as i32) {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
     }
 
@@ -200,7 +200,7 @@ impl CPU {
         if (self.registers[rs1] as u32) < (self.registers[rs2] as u32) {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
     }
 
@@ -208,12 +208,8 @@ impl CPU {
         if (self.registers[rs1] as u32) >= (self.registers[rs2] as u32) {
             self.pc = (self.pc as i32 + imm) as usize;
         } else {
-            self.pc += 1;
+            self.pc += 4;
         }
-    }
-
-    pub fn jump(&mut self, target: usize) {
-        self.pc = target;
     }
 
     // LW: rd = mem[rs1 + imm]
@@ -222,7 +218,7 @@ impl CPU {
             let addr = (self.registers[rs1] + imm) as usize;
             self.registers[rd] = self.memory.read_word(addr) as i32; // 從記憶體讀
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // LH:讀 half,有號延伸(把 byte 當有號數)
@@ -232,7 +228,7 @@ impl CPU {
             let byte = self.memory.read_half(addr); //get raw u8
             self.registers[rd] = byte as i16 as i32; //as i8 -> as i32
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // LHU:讀 half,無號延伸(補0)
@@ -242,7 +238,7 @@ impl CPU {
             let byte = self.memory.read_half(addr);
             self.registers[rd] = byte as i32;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // LB:讀 byte,有號延伸(把 byte 當有號數)
@@ -252,7 +248,7 @@ impl CPU {
             let byte = self.memory.read_byte(addr); //get raw u8
             self.registers[rd] = byte as i8 as i32; //as i8 -> as i32
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // LBU:讀 byte,無號延伸(補0)
@@ -262,28 +258,28 @@ impl CPU {
             let byte = self.memory.read_byte(addr);
             self.registers[rd] = byte as i32;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     // SW: mem[rs1 + imm] = rs2
     pub fn sw(&mut self, rs1: usize, rs2: usize, imm: i32) {
         let addr = (self.registers[rs1] + imm) as usize; // 算位址
         self.memory.write_word(addr, self.registers[rs2] as u32); // 寫進記憶體
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //SB:寫 half(取暫存器低 8 位)
     pub fn sh(&mut self, rs1: usize, rs2: usize, imm: i32) {
         let addr = (self.registers[rs1] + imm) as usize;
         self.memory.write_half(addr, self.registers[rs2] as u16);
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //SB:寫 byte(取暫存器低 8 位)
     pub fn sb(&mut self, rs1: usize, rs2: usize, imm: i32) {
         let addr = (self.registers[rs1] + imm) as usize;
         self.memory.write_byte(addr, self.registers[rs2] as u8);
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //LUI: rd = imm(已經是高位形式)
@@ -291,7 +287,7 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     //AUIPC: rd = pc + imm
@@ -299,14 +295,29 @@ impl CPU {
         if rd != 0 {
             self.registers[rd] = (self.pc as i32) + imm;
         }
-        self.pc += 1;
+        self.pc += 4;
     }
 
     pub fn jal(&mut self, rd: usize, imm: i32) {
         if rd != 0 {
-            self.registers[rd] = (self.pc + 1) as i32;
+            self.registers[rd] = (self.pc + 4) as i32;
         }
         self.pc = (self.pc as i32 + imm) as usize;
+    }
+
+    pub fn jalr(&mut self, rd: usize, rs1: usize, imm: i32) {
+        let target = (self.registers[rs1] + imm) as usize; //jalr x1, x1, 0 (寫讀後寫)
+        if rd != 0 {
+            self.registers[rd] = (self.pc + 4) as i32;
+        }
+        self.pc = target;
+    }
+
+    pub fn load_program(&mut self, program: &[u32], start: usize) {
+        for (i, &inst) in program.iter().enumerate() {
+            let addr = start + i * 4;
+            self.memory.write_word(addr, inst);
+        }
     }
 
     pub fn execute(&mut self, inst: Instruction) {
@@ -416,11 +427,11 @@ impl CPU {
             Instruction::Auipc { rd, imm } => {
                 self.auipc(rd, imm);
             }
-            Instruction::Jal { rd, imm} => {
+            Instruction::Jal { rd, imm } => {
                 self.jal(rd, imm);
             }
-            Instruction::Jump { target } => {
-                self.jump(target);
+            Instruction::Jalr { rd, rs1, imm } => {
+                self.jalr(rd, rs1, imm);
             }
         }
     }
