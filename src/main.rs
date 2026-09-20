@@ -25,8 +25,20 @@ impl CPU {
 }
 
 
-fn main() {}
-
+fn main() {
+    let mut cpu = CPU { registers: [0; 32], memory: Memory::new(1000), pc: 0, halt: false };
+    let program: Vec<u32> = vec![
+        0x00000093,
+        0x00100113,
+        0x00b00193,
+        0x002080b3,
+        0x00110113,
+        0xfe314ce3,
+        0x00000073,
+    ];
+    cpu.run_binary(program);
+    println!("1+2+...+10 = {}", cpu.registers[1]);   // 印出 55!
+}
 #[cfg(test)]
 mod tests {
     //把外部(父模組)的東西引入近來
